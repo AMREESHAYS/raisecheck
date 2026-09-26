@@ -18,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               sal<span>tor</span>
             </Link>
             <nav>
+              <Link href="/negotiate">Ask for a raise</Link>
               <Link href="/">Check my pay</Link>
               <Link href="/explore">Explore data</Link>
               <Link href="/about">How it works</Link>

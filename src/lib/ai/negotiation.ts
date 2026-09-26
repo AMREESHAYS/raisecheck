@@ -128,8 +128,14 @@ function templateDraft(req: NegotiationRequest): { subject: string | null; body:
   const role = roleBySlug(req.roleSlug)?.label ?? req.roleSlug;
   const city = cityBySlug(req.citySlug)?.label ?? req.citySlug;
   const who = req.recipient?.trim() || "there";
-  const achievements =
-    req.achievements?.trim() || "[one or two specific things you delivered this year]";
+  // Lower-cases a leading capital so it reads naturally after "I've ..." —
+  // unless it starts with an acronym or a proper noun we should not touch.
+  const rawAchievements = req.achievements?.trim();
+  const achievements = rawAchievements
+    ? /^[A-Z][a-z]/.test(rawAchievements)
+      ? rawAchievements.charAt(0).toLowerCase() + rawAchievements.slice(1)
+      : rawAchievements
+    : "[one or two specific things you delivered this year]";
 
   const hedge = a.fairRange.benchmark.mostlySeedData || a.fairRange.benchmark.confidence === "low";
   const marketLine = hedge

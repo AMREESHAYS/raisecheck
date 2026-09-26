@@ -6,6 +6,7 @@ import { isAiEnabled } from "@/lib/ai/client";
 import { CITY_SLUGS, COMPANY_TYPE_SLUGS, ROLE_SLUGS } from "@/lib/data/taxonomy";
 import { clientKey, rateLimit } from "@/lib/ratelimit";
 import { loadRoleRows } from "@/lib/repo";
+import { buildEvidence } from "@/lib/evidence";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -86,7 +87,14 @@ export async function POST(request: Request) {
       recipient: input.recipient,
       mentionOutsideInterest: input.mentionOutsideInterest,
     });
-    return NextResponse.json({ draft, assessment });
+    const evidence = buildEvidence(
+      rows,
+      assessment,
+      input.roleSlug,
+      input.citySlug,
+      input.yearsExperience,
+    );
+    return NextResponse.json({ draft, assessment, evidence });
   } catch (err) {
     console.error("negotiation draft failed", err);
     return NextResponse.json({ error: "Couldn't produce a draft. Please try again." }, { status: 500 });
