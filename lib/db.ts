@@ -73,16 +73,34 @@ export function hashClient(ip: string, fingerprint: string) {
     .digest("hex");
 }
 
-export async function hasRecentSubmission(ipHash: string, roleTitle: string) {
+/**
+ * The id of this client's existing submission for a role, if there is one.
+ *
+ * The gate exists to stop one person stuffing a bucket, which means one row per
+ * client per role — not one *attempt*. Rejecting the second attempt outright was
+ * wrong: it blocked anyone correcting a typo, and made the app look broken to
+ * anyone checking a second time. Returning the id lets the caller replace the
+ * row instead, which enforces the same limit without the dead end.
+ */
+export async function existingSubmissionId(ipHash: string, roleTitle: string) {
   const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
-  const { count, error } = await supabase()
+  const { data, error } = await supabase()
     .from(T("salary_submission"))
-    .select("id", { count: "exact", head: true })
+    .select("id")
     .eq("ip_hash", ipHash)
     .eq("role_title", roleTitle)
-    .gt("submitted_at", since);
+    .gt("submitted_at", since)
+    .limit(1);
   if (error) throw new Error(`rate-limit check failed: ${error.message}`);
-  return (count ?? 0) > 0;
+  return data?.[0]?.id ?? null;
+}
+
+export async function replaceSubmission(id: string, s: Submission) {
+  const { error } = await supabase()
+    .from(T("salary_submission"))
+    .update({ ...s, id })
+    .eq("id", id);
+  if (error) throw new Error(`update failed: ${error.message}`);
 }
 
 export async function insertSubmission(s: Submission) {

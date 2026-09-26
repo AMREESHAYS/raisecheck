@@ -34,6 +34,7 @@ type Result = {
   is_sample?: boolean;
   you: Profile & { role_category: string; experience_bucket: string };
   held_for_review: boolean;
+  replaced_earlier?: boolean;
   market: Market;
   external: ExternalBench[];
   inflation: {
@@ -305,6 +306,13 @@ function Results({ result, onReset }: { result: Result; onReset: () => void }) {
       </h1>
       <p className="num mt-2 text-[2.75rem] leading-none">{inrShort(you.current_ctc_annual)}</p>
       <p className="mt-1 text-sm text-muted">{inrFull(you.current_ctc_annual)} annual CTC — the figure you gave us</p>
+
+      {result.replaced_earlier && (
+        <p className="mt-5 rounded-lg border border-line bg-card px-4 py-3 text-sm leading-relaxed text-muted">
+          You&apos;d already submitted this role today, so we updated that entry rather than adding a
+          second one. One figure per person per role keeps the percentiles honest.
+        </p>
+      )}
 
       {result.held_for_review && (
         <p className="mt-6 rounded-lg border border-line bg-card px-4 py-3 text-sm leading-relaxed text-muted">
