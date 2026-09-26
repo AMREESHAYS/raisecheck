@@ -46,6 +46,28 @@ function T(name: string) {
   return `${name}${SUFFIX}`;
 }
 
+/**
+ * Whether the segment columns exist yet.
+ *
+ * Schema and code deploy separately, so for a window the code knows about a
+ * column the database does not have. Hard-failing there takes down submissions
+ * — the one action the product exists for — over a field that is optional
+ * anyway. Probed once and cached; the moment the column is added, the next cold
+ * start picks it up with no redeploy.
+ */
+let segmentColumns: Promise<boolean> | null = null;
+
+export function hasSegmentColumns() {
+  segmentColumns ??= (async () => {
+    const { error } = await supabase()
+      .from(T("salary_submission"))
+      .select("employer_segment")
+      .limit(1);
+    return !error;
+  })().catch(() => false);
+  return segmentColumns;
+}
+
 export type Submission = {
   id: string;
   role_title: string;
@@ -95,16 +117,23 @@ export async function existingSubmissionId(ipHash: string, roleTitle: string) {
   return data?.[0]?.id ?? null;
 }
 
+/** Drops fields the live schema doesn't have yet, rather than failing the write. */
+async function forSchema(s: Submission) {
+  if (await hasSegmentColumns()) return s;
+  const { employer_segment: _dropped, ...rest } = s;
+  return rest as Submission;
+}
+
 export async function replaceSubmission(id: string, s: Submission) {
   const { error } = await supabase()
     .from(T("salary_submission"))
-    .update({ ...s, id })
+    .update({ ...(await forSchema(s)), id })
     .eq("id", id);
   if (error) throw new Error(`update failed: ${error.message}`);
 }
 
 export async function insertSubmission(s: Submission) {
-  const { error } = await supabase().from(T("salary_submission")).insert(s);
+  const { error } = await supabase().from(T("salary_submission")).insert(await forSchema(s));
   if (error) throw new Error(`insert failed: ${error.message}`);
 }
 
@@ -180,9 +209,14 @@ export async function externalBenchmarks(args: {
   years: number;
   segment?: string | null;
 }): Promise<ExternalBenchmark[]> {
+  const withSegment = await hasSegmentColumns();
   const q = supabase()
     .from(T("external_benchmark"))
-    .select("source, segment, source_url, license_note, p25, p50, p75, sample_size, as_of")
+    .select(
+      withSegment
+        ? "source, segment, source_url, license_note, p25, p50, p75, sample_size, as_of"
+        : "source, source_url, license_note, p25, p50, p75, sample_size, as_of",
+    )
     .eq("role_category", args.role_category)
     .lte("min_years", args.years)
     .gte("max_years", args.years)
@@ -196,7 +230,9 @@ export async function externalBenchmarks(args: {
       ? q.or(`city.eq.${args.city},city.is.null`)
       : q.is("city", null));
     if (error) return [];
-    const rows = data ?? [];
+    // The select list is chosen at runtime, so the row type can't be inferred.
+    const raw = (data ?? []) as unknown as Omit<ExternalBenchmark, "segment"> & { segment?: string | null };
+    const rows = (raw as unknown as ExternalBenchmark[]).map((r) => ({ ...r, segment: r.segment ?? null }));
     // Their own segment first, then the rest — the comparison that answers their
     // question is the one against employers like theirs, not a blend of all of them.
     if (!args.segment) return rows;
