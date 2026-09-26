@@ -9,6 +9,46 @@ negotiation coach that only argues from your own numbers.
 API route and never leaves the server. Every table has RLS enabled with no policies,
 so the anon key can read nothing — only the server's service-role key touches rows.
 
+## Technology
+
+**Frontend** — Next.js 15 (App Router) with React 19, TypeScript and Tailwind CSS v4.
+Mobile-first single-screen flow; dynamic Open Graph share cards generated at request
+time with `next/og`.
+
+**Database** — Supabase Postgres. The schema contains no personally identifiable
+columns by design: there is no name, email or phone field anywhere. Row Level Security
+is enabled with no policies defined, so anon and authenticated keys can read nothing;
+only the server's service-role key accesses rows. Percentiles, percentile rank and
+outlier statistics are computed inside Postgres via a single `security definer`
+function using `percentile_cont`, returning aggregates only — individual salary rows
+never cross the network.
+
+**AI** — Groq (`openai/gpt-oss-120b`) through its OpenAI-compatible endpoint using
+plain `fetch`, no SDK. Retrieval-augmented: the server re-derives every market figure
+from the database and injects it as a grounding block, never trusting client-supplied
+numbers. The system prompt requires sample-size citation, forbids company-level pay
+claims, and requires the model to state when data is insufficient rather than estimate.
+
+**Data ingestion** — Third-party benchmarks are collected in batch through Apify and
+stored in a separate table with per-source attribution, sample size and as-of date;
+they are never merged into community percentiles. A currency-proof gate rejects any
+scraped row that cannot be established as Indian rupees.
+
+**Inflation** — Real-terms calculations use published MOSPI/RBI CPI data, compounded
+per calendar year rather than summed.
+
+**Testing** — 103 assertions covering percentile logic, currency parsing, validation
+gates and bucket fallback, running offline with no test framework.
+
+**Deployment** — Netlify, using `@netlify/plugin-nextjs` for the Next.js server
+runtime. The app has API routes, so it cannot deploy as a static site.
+
+## Contributors
+
+- [@DevBaghel-02](https://github.com/DevBaghel-02)
+- [@hrmnsingh182007-ship-it](https://github.com/hrmnsingh182007-ship-it)
+- [@pkcpranav007-spec](https://github.com/pkcpranav007-spec)
+
 ## Setup
 
 1. **Create a Supabase project** (supabase.com → New project), or provision one

@@ -9,3 +9,6 @@ supabase/.branches
 .env
 .env.*
 !.env.local.example
+
+# Local editor config, not project code
+.claude
