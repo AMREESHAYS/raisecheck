@@ -196,6 +196,7 @@ export function matchYears(input: unknown): number | null {
 
 export type DataPoint = {
   role_category: Category;
+  /** Null means all-India: the row proved INR but named no city. */
   city: string | null;
   years: number | null;
   ctc: number;
@@ -210,18 +211,47 @@ const TITLE_KEYS = ["jobTitle", "title", "role", "designation", "position", "job
 const LOCATION_KEYS = ["location", "city", "jobLocation", "place", "region", "office"];
 const YEARS_KEYS = ["yearsOfExperience", "experience", "yoe", "years", "experienceRange", "seniority"];
 
-/** One scraped row -> one comparable point, or null if it can't be read. */
+/**
+ * One scraped row -> one comparable point, or null if it can't be read.
+ *
+ * The hard rule is that a row must PROVE it is Indian rupees before it counts.
+ * levels.fyi returns US rows as bare numbers with no currency marker at all, so
+ * parseMoney reports UNKNOWN and they would otherwise sail through as rupees —
+ * a $300,500 median landing in the database as ₹3,00,500.
+ *
+ * Two things can prove it, and either is enough:
+ *   - an explicit INR currency field (AmbitionBox has one, and no location)
+ *   - a recognised Indian city (levels.fyi has locations, and no currency field)
+ */
 export function extractPoint(row: Record<string, unknown>): DataPoint | null {
   const role_category = matchRoleCategory(pickField(row, TITLE_KEYS));
   if (!role_category) return null;
-  const ctc = toAnnualInr(parseMoney(pickField(row, SALARY_KEYS)));
+
+  // An explicit non-India market beats everything, including a matching city name.
+  const market = pickField(row, ["market", "country", "countryName"]);
+  if (typeof market === "string" && market.trim() && !/^(india|in|ind)$/i.test(market.trim()))
+    return null;
+
+  const declared = pickField(row, ["salary_currency", "currency", "currencyCode"]);
+  const declaredInr = typeof declared === "string" && /^inr$|^rs\.?$|^₹$/i.test(declared.trim());
+  if (typeof declared === "string" && declared.trim() && !declaredInr) return null;
+
+  // Monthly figures are not annual CTC and must not be mixed in with ones that are.
+  const period = pickField(row, ["salary_period", "period", "payPeriod"]);
+  if (typeof period === "string" && period.trim() && !/year|annual|yearly|pa|lpa/i.test(period))
+    return null;
+
+  const city = matchCity(pickField(row, LOCATION_KEYS));
+  const money = parseMoney(pickField(row, SALARY_KEYS));
+  if (money?.currency === "USD") return null; // Needs an explicit rate; see toAnnualInr.
+
+  // Nothing established the currency: no INR marker and no Indian city. Drop it.
+  if (!declaredInr && !city && money?.currency !== "INR") return null;
+
+  const ctc = toAnnualInr(money);
   if (!ctc) return null;
-  return {
-    role_category,
-    city: matchCity(pickField(row, LOCATION_KEYS)),
-    years: matchYears(pickField(row, YEARS_KEYS)),
-    ctc,
-  };
+
+  return { role_category, city, years: matchYears(pickField(row, YEARS_KEYS)), ctc };
 }
 
 /* ------------------------------------------------------------- aggregation */

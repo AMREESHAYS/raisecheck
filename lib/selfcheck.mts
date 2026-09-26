@@ -198,7 +198,44 @@ assert.deepEqual([bucket.min_years, bucket.max_years], [6, 9], "years land in a 
 assert.ok(bucket.p25 < bucket.p50 && bucket.p50 < bucket.p75, "percentiles ordered");
 assert.ok(!("company" in bucket) && !("employer" in bucket), "no employer identity survives aggregation");
 assert.deepEqual(aggregate(pts.slice(0, 7), 8), [], "a bucket under the minimum is not published");
-const noCity = aggregate(pts.map((p) => ({ ...p, city: null })), 8);
-assert.equal(noCity[0].city, null, "location-less points aggregate to an all-India bucket");
+// Currency guard: a row we cannot place in India could be in any currency, and
+// levels.fyi returns US dollars as bare numbers with no marker at all.
+assert.equal(
+  extractPoint({ title: "Software Engineer", location: "Seattle, WA", totalCompensation: 300500 }),
+  null,
+  "a non-Indian location is dropped, never treated as rupees",
+);
+assert.equal(
+  extractPoint({ title: "Software Engineer", location: "Bengaluru", totalCompensation: 2800000, market: "United States" }),
+  null,
+  "an explicit non-India market overrides a matching city name",
+);
+assert.equal(
+  extractPoint({ title: "Software Engineer", location: "Bengaluru", salary: "$150,000" }),
+  null,
+  "an explicit USD figure is dropped without a conversion rate",
+);
+assert.ok(
+  extractPoint({ title: "Software Engineer", location: "Bengaluru", totalCompensation: 2800000, market: "India" }),
+  "an India-marked row still parses",
+);
+// AmbitionBox proves currency with a field and gives no location at all.
+const ab = extractPoint({
+  role: "Software Engineer", location: "", avg_salary: 1141155,
+  salary_currency: "INR", salary_period: "yearly", experience_range: "3-9 years",
+});
+assert.ok(ab, "an explicit INR marker is proof enough without a city");
+assert.equal(ab!.city, null, "no city means an all-India bucket");
+assert.equal(ab!.ctc, 1141155);
+assert.equal(
+  extractPoint({ role: "Software Engineer", avg_salary: 95000, salary_currency: "INR", salary_period: "monthly" }),
+  null,
+  "a monthly figure is not annual CTC",
+);
+assert.equal(
+  extractPoint({ title: "Software Engineer", salary: 300500 }),
+  null,
+  "no currency marker and no city: nothing proves this is rupees",
+);
 
 console.log("all checks passed");
