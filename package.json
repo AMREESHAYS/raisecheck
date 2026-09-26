@@ -1,0 +1,29 @@
+{
+  "name": "raisecheck",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "seed": "tsx scripts/seed.mts",
+    "test": "tsx lib/selfcheck.mts",
+    "import-benchmarks": "tsx scripts/import-benchmarks.mts",
+    "ingest": "tsx scripts/ingest-apify.mts",
+    "health": "tsx scripts/health.mts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "next": "^15.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.13",
+    "dotenv": "^18.0.4",
+    "tailwindcss": "^4.1.13",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.2"
+  }
+}

@@ -1,0 +1,11 @@
+node_modules
+.next
+tsconfig.tsbuildinfo
+supabase/.temp
+supabase/.branches
+
+# Every env file except the example. The service-role key bypasses RLS —
+# one committed .env and the whole database is readable by anyone with the repo.
+.env
+.env.*
+!.env.local.example

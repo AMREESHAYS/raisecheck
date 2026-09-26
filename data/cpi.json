@@ -1,0 +1,18 @@
+{
+  "series": "India CPI (Combined, all groups) — annual average inflation, calendar year, %",
+  "source": "MOSPI Consumer Price Index releases (https://mospi.gov.in/web/cpi) / RBI Database on Indian Economy (https://dbie.rbi.org.in)",
+  "geography": "all-India. State/city-level CPI is published by MOSPI but not yet wired in — see README.",
+  "verified_through": 2024,
+  "rates": {
+    "2017": { "pct": 3.3, "provisional": false },
+    "2018": { "pct": 3.9, "provisional": false },
+    "2019": { "pct": 3.7, "provisional": false },
+    "2020": { "pct": 6.6, "provisional": false },
+    "2021": { "pct": 5.1, "provisional": false },
+    "2022": { "pct": 6.7, "provisional": false },
+    "2023": { "pct": 5.4, "provisional": false },
+    "2024": { "pct": 4.9, "provisional": false },
+    "2025": { "pct": 2.6, "provisional": true },
+    "2026": { "pct": 4.0, "provisional": true }
+  }
+}

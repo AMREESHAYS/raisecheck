@@ -1,0 +1,47 @@
+{
+  "_comment": [
+    "Apify actors used to ingest third-party salary benchmarks.",
+    "actorId values were read from the public Apify store; verify them in your own",
+    "account before a paid run, since actors get renamed and deprecated.",
+    "license_note is printed in the UI next to every figure from that source.",
+    "State what actually permits your use — this file does not establish it."
+  ],
+  "sources": {
+    "ambitionbox": {
+      "label": "AmbitionBox",
+      "actorId": "PhohhNWrS0hp5Ghmv",
+      "actorSlug": "thirdwatch/ambitionbox-scraper",
+      "sourceUrl": "https://www.ambitionbox.com",
+      "license_note": "Collected via Apify. Verify your use complies with AmbitionBox's terms.",
+      "input": {
+        "companies": ["tcs", "infosys", "wipro", "accenture", "cognizant"],
+        "roles": [],
+        "maxResults": 50,
+        "includeCompanyReviews": false,
+        "proxyConfiguration": { "useApifyProxy": true, "apifyProxyGroups": ["RESIDENTIAL"], "apifyProxyCountry": "IN" }
+      }
+    },
+    "glassdoor": {
+      "label": "Glassdoor India",
+      "actorId": "wpsElQeo8VjQXQpFm",
+      "actorSlug": "getdataforme/glassdoor-salaries-scraper",
+      "sourceUrl": "https://www.glassdoor.co.in",
+      "license_note": "Collected via Apify. Verify your use complies with Glassdoor's terms.",
+      "input": { "Jobname": "software engineer", "Country": "India", "itemLimit": 200 }
+    },
+    "levels_fyi": {
+      "label": "levels.fyi",
+      "actorId": "FAOXriflJkR6OcPdS",
+      "actorSlug": "parseforge/levels-fyi-scraper",
+      "sourceUrl": "https://www.levels.fyi",
+      "license_note": "Collected via Apify. Verify your use complies with levels.fyi's terms.",
+      "input": {
+        "companies": ["google", "microsoft", "amazon", "flipkart", "zomato"],
+        "jobFamilies": ["software-engineer"],
+        "maxItems": 200,
+        "maxConcurrency": 5,
+        "includePayBenchmarks": true
+      }
+    }
+  }
+}

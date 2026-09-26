@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# RaiseCheck has API routes (/api/submit, /api/chat), so it cannot deploy as a
+# static site. This plugin gives Netlify the Next.js server runtime. It is applied
+# on a Git-connected build — a drag-and-dropped zip of static files would 404 on
+# every API call.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  NODE_VERSION = "22"
