@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { validate } from "@/lib/validate";
 import {
   hashClient, hasRecentSubmission, insertSubmission, bucketStats,
-  verifiedCountThisMonth, externalBenchmarks,
+  verifiedCountThisMonth, externalBenchmarks, missingConfig,
 } from "@/lib/db";
 import { isOutlier, marketRate, MIN_SAMPLE } from "@/lib/stats";
 import { expBucket } from "@/lib/vocab";
@@ -90,8 +90,15 @@ export async function POST(req: Request) {
     });
   } catch (e) {
     console.error("submit failed", e);
+    // "Try again in a moment" is a lie when the server is misconfigured — no
+    // amount of retrying fixes a missing environment variable. Say which it is.
+    const missing = missingConfig();
     return NextResponse.json(
-      { error: "We couldn't save that right now. Try again in a moment." },
+      {
+        error: missing.length
+          ? `Server isn't configured: ${missing.join(", ")} missing. Add it and redeploy.`
+          : "We couldn't save that right now. Try again in a moment.",
+      },
       { status: 503 },
     );
   }

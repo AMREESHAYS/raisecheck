@@ -20,8 +20,16 @@ export function supabase() {
 }
 
 /** Whether the server has what it needs to talk to Supabase at all. */
+export function missingConfig() {
+  const needed = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"];
+  // hashClient() throws without a salt in production, which would render a working
+  // form whose every submission fails. Treat it as required wherever it is required.
+  if (process.env.NODE_ENV === "production") needed.push("IP_HASH_SALT");
+  return needed.filter((k) => !process.env[k]);
+}
+
 export function isConfigured() {
-  return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return missingConfig().length === 0;
 }
 
 export type Submission = {

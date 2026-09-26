@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Check from "./Check";
-import { verifiedCountThisMonth, isConfigured } from "@/lib/db";
+import { verifiedCountThisMonth, isConfigured, missingConfig } from "@/lib/db";
 import { ROLES, CITIES, expBucket } from "@/lib/vocab";
 
 export const dynamic = "force-dynamic";
@@ -50,11 +50,12 @@ export default async function Page({ searchParams }: { searchParams: Search }) {
 }
 
 function Setup() {
-  const missing = [
+  const required = new Set(missingConfig());
+  const vars = [
     ["SUPABASE_URL", process.env.SUPABASE_URL],
     ["SUPABASE_SERVICE_ROLE_KEY", process.env.SUPABASE_SERVICE_ROLE_KEY],
-    ["GROQ_API_KEY", process.env.GROQ_API_KEY],
     ["IP_HASH_SALT", process.env.IP_HASH_SALT],
+    ["GROQ_API_KEY", process.env.GROQ_API_KEY],
   ] as const;
 
   return (
@@ -68,14 +69,14 @@ function Setup() {
       </p>
 
       <ul className="mt-6 space-y-2">
-        {missing.map(([name, value]) => (
+        {vars.map(([name, value]) => (
           <li
             key={name}
             className="flex items-center justify-between rounded-lg border border-line bg-card px-4 py-3 text-sm"
           >
             <code>{name}</code>
             <span style={{ color: value ? "var(--color-ontrack)" : "var(--color-under)" }}>
-              {value ? "set" : "missing"}
+              {value ? "set" : required.has(name) ? "missing — required" : "missing"}
             </span>
           </li>
         ))}
