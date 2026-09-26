@@ -6,6 +6,9 @@ supabase/.branches
 
 # Every env file except the example. The service-role key bypasses RLS —
 # one committed .env and the whole database is readable by anyone with the repo.
+# The negation must come last, or a later .env* pattern re-ignores it.
 .env
-.env.*
+.env*
 !.env.local.example
+
+.vercel
