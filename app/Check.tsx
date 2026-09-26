@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ROLE_TITLES, CITIES, EMPLOYMENT_TYPES, COMPANY_SIZES } from "@/lib/vocab";
+import { ROLE_TITLES, CITIES, EMPLOYMENT_TYPES, COMPANY_SIZES, SEGMENTS, SEGMENT_HINTS } from "@/lib/vocab";
 import { inrShort, inrFull } from "@/lib/format";
 import Chat, { type Profile } from "./Chat";
 
@@ -20,6 +20,7 @@ type Market =
 
 type ExternalBench = {
   source: string;
+  segment: string | null;
   source_url: string | null;
   license_note: string;
   p25: number | null;
@@ -33,6 +34,7 @@ type Result = {
   is_sample?: boolean;
   you: Profile & { role_category: string; experience_bucket: string };
   held_for_review: boolean;
+  replaced_earlier?: boolean;
   market: Market;
   external: ExternalBench[];
   inflation: {
@@ -86,6 +88,7 @@ export default function Check({
     last_raise_date: "",
     employment_type: "full-time",
     company_size_bucket: "",
+    employer_segment: "",
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -177,6 +180,19 @@ export default function Check({
         </div>
 
         <div>
+          <label className={label} htmlFor="segment">What kind of employer?</label>
+          <select id="segment" className={field} value={form.employer_segment} onChange={set("employer_segment")}>
+            <option value="">Select</option>
+            {SEGMENTS.map((sg) => <option key={sg} value={sg}>{sg}</option>)}
+          </select>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted">
+            {form.employer_segment
+              ? SEGMENT_HINTS[form.employer_segment as keyof typeof SEGMENT_HINTS]
+              : "The biggest single factor in Indian pay. Engineering at 3-5 years is ₹7 L in IT services and ₹26 L at a product company — both real."}
+          </p>
+        </div>
+
+        <div>
           <label className={label} htmlFor="ctc">Current annual CTC (₹)</label>
           <input
             id="ctc" className={field} type="number" inputMode="numeric" min={0}
@@ -249,7 +265,7 @@ export default function Check({
           <NoPii />
         </div>
         <p className="text-center text-xs text-muted">
-          {initialCount.toLocaleString("en-IN")} verified submission{initialCount === 1 ? "" : "s"} this month
+          {initialCount.toLocaleString("en-IN")} submission{initialCount === 1 ? "" : "s"} this month, after validation checks
         </p>
       </form>
     </main>
@@ -259,6 +275,12 @@ export default function Check({
 function Results({ result, onReset }: { result: Result; onReset: () => void }) {
   const { you, market, external, inflation } = result;
   const enough = !("insufficient" in market);
+  // Cold start: with too few submissions to speak for themselves, a real
+  // published figure for this person's own employer segment is a better answer
+  // than "not enough data" — and an honest one, as long as it is labelled.
+  const primary = enough
+    ? null
+    : (external.find((e) => e.segment && e.segment === you.employer_segment) ?? null);
 
   return (
     <main className="mx-auto max-w-xl px-5 pb-6 pt-10">
@@ -285,6 +307,13 @@ function Results({ result, onReset }: { result: Result; onReset: () => void }) {
       <p className="num mt-2 text-[2.75rem] leading-none">{inrShort(you.current_ctc_annual)}</p>
       <p className="mt-1 text-sm text-muted">{inrFull(you.current_ctc_annual)} annual CTC — the figure you gave us</p>
 
+      {result.replaced_earlier && (
+        <p className="mt-5 rounded-lg border border-line bg-card px-4 py-3 text-sm leading-relaxed text-muted">
+          You&apos;d already submitted this role today, so we updated that entry rather than adding a
+          second one. One figure per person per role keeps the percentiles honest.
+        </p>
+      )}
+
       {result.held_for_review && (
         <p className="mt-6 rounded-lg border border-line bg-card px-4 py-3 text-sm leading-relaxed text-muted">
           Your submission is far from everything else in this bucket, so it&apos;s held for review before it
@@ -294,19 +323,38 @@ function Results({ result, onReset }: { result: Result; onReset: () => void }) {
 
       {enough ? (
         <Verdict market={market} ctc={you.current_ctc_annual} />
+      ) : primary ? (
+        <Verdict
+          market={{
+            n: primary.sample_size ?? 0,
+            p25: primary.p25 ?? primary.p50,
+            p50: primary.p50,
+            p75: primary.p75 ?? primary.p50,
+            rank_pct: null,
+            basis: {
+              role_category: you.role_category,
+              city: null,
+              experience: you.experience_bucket,
+            },
+            widened: false,
+            note: null,
+          }}
+          ctc={you.current_ctc_annual}
+          source={primary}
+        />
       ) : (
         <section className="mt-9 rounded-xl border border-line bg-card p-5">
           <h2 className="num text-xl">Not enough data yet</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            Only {market.n} verified submission{market.n === 1 ? "" : "s"} match. We need at least{" "}
-            {result.min_sample} before we&apos;ll put a number on a bucket — a range built on three people
-            isn&apos;t a market rate, it&apos;s a rumour. Yours is in. Share this with people in your role
-            and check back.
+            Only {market.n} submission{market.n === 1 ? "" : "s"} match, and we need at least{" "}
+            {result.min_sample} before putting a number on a bucket — a range built on three people
+            isn&apos;t a market rate, it&apos;s a rumour. We also have no published benchmark for this
+            combination yet. Yours is in; share this with people in your role and check back.
           </p>
         </section>
       )}
 
-      {external.length > 0 && <ExternalRates rows={external} />}
+      {external.length > 0 && <ExternalRates rows={external} segment={you.employer_segment} />}
 
       {inflation ? (
         <section className="mt-9">
@@ -354,6 +402,7 @@ function Results({ result, onReset }: { result: Result; onReset: () => void }) {
           last_raise_pct: you.last_raise_pct,
           last_raise_date: you.last_raise_date,
           employment_type: you.employment_type,
+          employer_segment: you.employer_segment,
         }}
       />
     </main>
@@ -428,15 +477,28 @@ function ShareRange({
  * folded into the percentiles above — two datasets with different methodologies
  * averaged into one number is how a benchmark stops meaning anything.
  */
-function ExternalRates({ rows }: { rows: ExternalBench[] }) {
+function ExternalRates({ rows, segment }: { rows: ExternalBench[]; segment?: string | null }) {
+  const mine = rows.filter((r) => r.segment && r.segment === segment);
+  const others = rows.filter((r) => !mine.includes(r));
+
   return (
     <section className="mt-9">
-      <h2 className="text-xs font-medium uppercase tracking-[0.14em] text-muted">Other published benchmarks</h2>
+      <h2 className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
+        {mine.length ? "Published benchmarks for your kind of employer" : "Other published benchmarks"}
+      </h2>
+      {mine.length > 0 && others.length > 0 && (
+        <p className="mt-2 text-sm leading-relaxed text-muted">
+          Segments are shown apart because they are not comparable. The same role at the same
+          experience pays several times more at a product company than in IT services, and both
+          figures are correct — averaging them produces a number that describes nobody.
+        </p>
+      )}
       <ul className="mt-3 space-y-3">
-        {rows.map((r, i) => (
+        {[...mine, ...others].map((r, i) => (
           <li key={i} className="rounded-xl border border-line bg-card p-4">
             <div className="flex items-baseline justify-between gap-3">
               <span className="text-sm font-medium">
+                {r.segment && <span className="mr-1.5 text-muted">{r.segment} ·</span>}
                 {r.source_url ? (
                   <a href={r.source_url} target="_blank" rel="noreferrer noopener" className="underline decoration-line underline-offset-4">
                     {r.source}
@@ -459,7 +521,16 @@ function ExternalRates({ rows }: { rows: ExternalBench[] }) {
   );
 }
 
-function Verdict({ market, ctc }: { market: Extract<Market, { p50: number }>; ctc: number }) {
+function Verdict({
+  market,
+  ctc,
+  source,
+}: {
+  market: Extract<Market, { p50: number }>;
+  ctc: number;
+  /** Set when the range comes from a published source rather than our submissions. */
+  source?: ExternalBench;
+}) {
   const rank = market.rank_pct;
   const { lo, hi } = useMemo(
     () => ({ lo: Math.min(market.p25, ctc) * 0.92, hi: Math.max(market.p75, ctc) * 1.08 }),
@@ -471,7 +542,9 @@ function Verdict({ market, ctc }: { market: Extract<Market, { p50: number }>; ct
 
   return (
     <section className="mt-9">
-      <h2 className="text-xs font-medium uppercase tracking-[0.14em] text-muted">Market range</h2>
+      <h2 className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
+        {source ? `Market range · ${source.segment}` : "Market range"}
+      </h2>
 
       <p className="num mt-3 text-[1.6rem] leading-snug" style={{ color: accent }}>
         {rank != null &&
@@ -511,10 +584,23 @@ function Verdict({ market, ctc }: { market: Extract<Market, { p50: number }>; ct
       </div>
 
       <p className="mt-6 text-sm leading-relaxed text-muted">
-        Based on <span className="font-medium text-ink">{market.n} verified submissions</span> for{" "}
-        {market.basis.role_category} roles, {market.basis.experience}
-        {market.basis.city ? `, in ${market.basis.city}` : ", across India"}. Percentiles, not an average —
-        one outlier shouldn&apos;t move your benchmark.
+        {source ? (
+          <>
+            Published by <span className="font-medium text-ink">{source.source}</span> from{" "}
+            <span className="font-medium text-ink">{market.n} data points</span> for{" "}
+            {market.basis.role_category} roles at {source.segment} employers,{" "}
+            {market.basis.experience}, as of {source.as_of}. Not our own submissions — we don&apos;t
+            have enough of those for this combination yet, and we&apos;d rather show you a real
+            number from someone else than a made-up one of our own.
+          </>
+        ) : (
+          <>
+            Based on <span className="font-medium text-ink">{market.n} submissions</span> for{" "}
+            {market.basis.role_category} roles, {market.basis.experience}
+            {market.basis.city ? `, in ${market.basis.city}` : ", across India"}. Percentiles, not an
+            average — one outlier shouldn&apos;t move your benchmark.
+          </>
+        )}
       </p>
       {market.note && (
         <p className="mt-3 rounded-lg border border-line bg-card px-4 py-3 text-sm leading-relaxed text-muted">

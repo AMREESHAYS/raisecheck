@@ -20,6 +20,7 @@ const SAMPLE = {
   last_raise_pct: 7,
   last_raise_date: "2024-08-01",
   employment_type: "full-time",
+  employer_segment: "Product & Internet",
 };
 
 export async function GET() {
@@ -29,7 +30,12 @@ export async function GET() {
 
     const [market, external, verified] = await Promise.all([
       marketRate(role_category, SAMPLE.city, SAMPLE.years_experience, SAMPLE.current_ctc_annual),
-      externalBenchmarks({ role_category, city: SAMPLE.city, years: SAMPLE.years_experience }),
+      externalBenchmarks({
+        role_category,
+        city: SAMPLE.city,
+        years: SAMPLE.years_experience,
+        segment: SAMPLE.employer_segment,
+      }),
       verifiedCountThisMonth(),
     ]);
 

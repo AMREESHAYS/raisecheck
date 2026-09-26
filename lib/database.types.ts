@@ -13,12 +13,15 @@ export type SalarySubmissionRow = {
   last_raise_date: string | null;
   employment_type: string;
   company_size_bucket: string | null;
+  employer_segment: string | null;
   submitted_at: string;
   ip_hash: string;
   status: "pending" | "verified" | "rejected";
 };
 
 export type ExternalBenchmarkRow = {
+  /** Employer category the figure describes. Null when the source didn't say. */
+  segment: string | null;
   id: string;
   source: string;
   source_url: string | null;
@@ -60,6 +63,20 @@ export type Database = {
         Update: Partial<ExternalBenchmarkRow>;
         Relationships: [];
       };
+      // The real-data rebuild runs against its own tables so the live demo keeps
+      // its rows. Identical shapes; TABLE_SUFFIX picks which pair is in use.
+      salary_submission_v2: {
+        Row: SalarySubmissionRow;
+        Insert: SalarySubmissionRow;
+        Update: Partial<SalarySubmissionRow>;
+        Relationships: [];
+      };
+      external_benchmark_v2: {
+        Row: ExternalBenchmarkRow;
+        Insert: Omit<ExternalBenchmarkRow, "id" | "imported_at"> & { id?: string };
+        Update: Partial<ExternalBenchmarkRow>;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -74,6 +91,17 @@ export type Database = {
         Returns: BucketStatsRow[];
       };
       verified_count_this_month: { Args: Record<never, never>; Returns: number };
+      bucket_stats_v2: {
+        Args: {
+          p_category: string;
+          p_city: string | null;
+          p_min_years: number;
+          p_max_years: number;
+          p_ctc: number | null;
+        };
+        Returns: BucketStatsRow[];
+      };
+      verified_count_this_month_v2: { Args: Record<never, never>; Returns: number };
     };
     Enums: Record<never, never>;
     CompositeTypes: Record<never, never>;

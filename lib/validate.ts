@@ -1,4 +1,4 @@
-import { ROLES, CITIES, EMPLOYMENT_TYPES, COMPANY_SIZES, expBucket } from "./vocab";
+import { ROLES, CITIES, EMPLOYMENT_TYPES, COMPANY_SIZES, SEGMENTS, expBucket } from "./vocab";
 
 // ponytail: one conservative national floor instead of 25 fabricated city figures.
 // State minimum wages are notified per state AND per skill category; wire the real
@@ -21,6 +21,7 @@ export type Validated = {
   last_raise_date: string | null;
   employment_type: string;
   company_size_bucket: string | null;
+  employer_segment: string | null;
   needsReview: boolean;
 };
 
@@ -52,6 +53,11 @@ export function validate(input: RawInput): { ok: true; value: Validated } | { ok
     sizeRaw == null || sizeRaw === "" ? null : String(sizeRaw);
   if (company_size_bucket && !(COMPANY_SIZES as readonly string[]).includes(company_size_bucket))
     return bad("Pick a company size from the list.");
+
+  const segRaw = input.employer_segment;
+  const employer_segment = segRaw == null || segRaw === "" ? null : String(segRaw);
+  if (employer_segment && !(SEGMENTS as readonly string[]).includes(employer_segment))
+    return bad("Pick an employer type from the list.");
 
   let last_raise_pct: number | null = null;
   if (input.last_raise_pct != null && input.last_raise_pct !== "") {
@@ -88,6 +94,7 @@ export function validate(input: RawInput): { ok: true; value: Validated } | { ok
       last_raise_date,
       employment_type,
       company_size_bucket,
+      employer_segment,
       needsReview: current_ctc_annual > CTC_REVIEW_CEILING,
     },
   };

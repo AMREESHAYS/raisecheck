@@ -1,0 +1,757 @@
+{
+  "segment": "mixed",
+  "dataset": "hBDIFHRKQJxLeDroe",
+  "fetched": "2026-09-26T10:32:51.395Z",
+  "items": [
+    {
+      "uuid": "94b8b76e-4258-4c29-b87a-d6391b34792e",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "ML / AI",
+      "yearsOfExperience": 7,
+      "yearsAtCompany": 0,
+      "offerDate": "2026-09-08T17:14:41.337+00:00",
+      "location": "Los Angeles, CA",
+      "dmaId": 803,
+      "countryId": 254,
+      "baseSalary": 100000,
+      "totalCompensation": 140000,
+      "avgAnnualStockGrantValue": 40000,
+      "avgAnnualBonusValue": 0,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    },
+    {
+      "uuid": "1d05055a-e0bf-423d-851e-78bd18c78d42",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "Distributed Systems (Back-End)",
+      "yearsOfExperience": 1,
+      "yearsAtCompany": 0,
+      "offerDate": "2026-09-01T06:13:11.55+00:00",
+      "location": "Durham, NC",
+      "dmaId": 560,
+      "countryId": 254,
+      "baseSalary": 120000,
+      "totalCompensation": 164600,
+      "avgAnnualStockGrantValue": 26600,
+      "avgAnnualBonusValue": 18000,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    },
+    {
+      "uuid": "3b720988-ad15-40cd-86ca-345ceb47c9e1",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "API Development (Back-End)",
+      "yearsOfExperience": 0,
+      "yearsAtCompany": 0,
+      "offerDate": "2026-09-14T08:45:04.866+00:00",
+      "location": "Mountain View, CA",
+      "dmaId": 807,
+      "countryId": 254,
+      "baseSalary": 150000,
+      "totalCompensation": 178500,
+      "avgAnnualStockGrantValue": 28500,
+      "avgAnnualBonusValue": 0,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    },
+    {
+      "uuid": "20bc6a1b-ea88-45e0-b0f5-474d3899b038",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "Full Stack",
+      "yearsOfExperience": 0,
+      "yearsAtCompany": 0,
+      "offerDate": "2026-09-14T00:46:29.155+00:00",
+      "location": "Los Angeles, CA",
+      "dmaId": 803,
+      "countryId": 254,
+      "baseSalary": 160000,
+      "totalCompensation": 179000,
+      "avgAnnualStockGrantValue": 19000,
+      "avgAnnualBonusValue": 0,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    },
+    {
+      "uuid": "0d47524b-0313-45d5-8d2a-e566ebc3e535",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "ML / AI",
+      "yearsOfExperience": 9,
+      "yearsAtCompany": 0,
+      "offerDate": "2026-09-17T02:51:54.416+00:00",
+      "location": "Los Angeles, CA",
+      "dmaId": 803,
+      "countryId": 254,
+      "baseSalary": 150000,
+      "totalCompensation": 188000,
+      "avgAnnualStockGrantValue": 38000,
+      "avgAnnualBonusValue": 0,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    },
+    {
+      "uuid": "bd11911a-f6e7-4823-9e01-ca6edcc4745d",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "Security",
+      "yearsOfExperience": 0,
+      "yearsAtCompany": 0,
+      "offerDate": "2026-09-15T06:31:03.535+00:00",
+      "location": "San Jose, CA",
+      "dmaId": 807,
+      "countryId": 254,
+      "baseSalary": 150000,
+      "totalCompensation": 192222.18000000002,
+      "avgAnnualStockGrantValue": 42222.18,
+      "avgAnnualBonusValue": 0,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    },
+    {
+      "uuid": "fc59a534-580e-46f6-8627-c2d24b2eeba0",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "Full Stack",
+      "yearsOfExperience": 2,
+      "yearsAtCompany": 0,
+      "offerDate": "2026-09-25T15:58:15.167+00:00",
+      "location": "Mountain View, CA",
+      "dmaId": 807,
+      "countryId": 254,
+      "baseSalary": 140000,
+      "totalCompensation": 186400,
+      "avgAnnualStockGrantValue": 26400,
+      "avgAnnualBonusValue": 20000,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    },
+    {
+      "uuid": "7619d106-7bfd-4758-bb43-036cd1964830",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "Full Stack",
+      "yearsOfExperience": 6,
+      "yearsAtCompany": 4,
+      "offerDate": "2026-08-28T21:04:08.763+00:00",
+      "location": "Seattle, WA",
+      "dmaId": 819,
+      "countryId": 254,
+      "baseSalary": 145000,
+      "totalCompensation": 185000,
+      "avgAnnualStockGrantValue": 40000,
+      "avgAnnualBonusValue": 0,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    },
+    {
+      "uuid": "fa767327-1fee-422e-8611-b772f2b00c4e",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "High-performance Computing",
+      "yearsOfExperience": 1,
+      "yearsAtCompany": 0,
+      "offerDate": "2026-09-04T17:29:46.627+00:00",
+      "location": "San Francisco, CA",
+      "dmaId": 807,
+      "countryId": 254,
+      "baseSalary": 180000,
+      "totalCompensation": 195200,
+      "avgAnnualStockGrantValue": 15200,
+      "avgAnnualBonusValue": 0,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    },
+    {
+      "uuid": "176ca862-a8c3-451d-94ee-7001e30a0427",
+      "company": "Google",
+      "title": "Software Engineer",
+      "jobFamily": "software-engineer",
+      "level": "L3",
+      "focusTag": "Data",
+      "yearsOfExperience": 0,
+      "yearsAtCompany": 0,
+      "offerDate": "2026-09-15T03:04:28.515+00:00",
+      "location": "Seattle, WA",
+      "dmaId": 819,
+      "countryId": 254,
+      "baseSalary": 150000,
+      "totalCompensation": 206700,
+      "avgAnnualStockGrantValue": 34200,
+      "avgAnnualBonusValue": 22500,
+      "gender": null,
+      "otherDetails": null,
+      "sourceUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer",
+      "scrapedAt": "2026-09-26T08:17:18.876Z",
+      "levelBenchmark": {
+        "level": "L3",
+        "alternateLevelName": "SWE II",
+        "levelTitles": [
+          "L3",
+          "SWE II"
+        ],
+        "levelDescription": "L3 / T3 is the new grad software engineering role at Google",
+        "percentOfWorkforce": 20,
+        "targetBonusPercentage": null,
+        "submissions": 55,
+        "averageTotalCompensation": 208297,
+        "averageBase": 157273,
+        "averageStock": 37696,
+        "averageBonus": 13329,
+        "averageCommission": 0,
+        "averageYearsOfExperience": 2.45,
+        "medianYearsOfExperience": 2,
+        "levelUrl": "https://www.levels.fyi/companies/google/salaries/software-engineer/levels/l3"
+      },
+      "payPercentiles": {
+        "market": "United States",
+        "submissions": 176,
+        "averageTotalCompensation": 317996,
+        "totalCompensation": {
+          "p10": 180000,
+          "p25": 217350,
+          "p50": 300500,
+          "p75": 384607,
+          "p90": 529000
+        },
+        "baseSalary": {
+          "p10": 150000,
+          "p25": 164000,
+          "p50": 198060,
+          "p75": 225000,
+          "p90": 250000
+        },
+        "stockGrant": {
+          "p10": 30000,
+          "p25": 40000,
+          "p50": 81000,
+          "p75": 155800,
+          "p90": 250000
+        },
+        "bonus": {
+          "p10": 0,
+          "p25": 0,
+          "p50": 23000,
+          "p75": 42000,
+          "p90": 56550
+        }
+      }
+    }
+  ]
+}

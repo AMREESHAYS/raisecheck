@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { validate } from "@/lib/validate";
 import {
-  hashClient, hasRecentSubmission, insertSubmission, bucketStats,
+  hashClient, existingSubmissionId, insertSubmission, replaceSubmission, bucketStats,
   verifiedCountThisMonth, externalBenchmarks, missingConfig,
 } from "@/lib/db";
 import { isOutlier, marketRate, MIN_SAMPLE } from "@/lib/stats";
@@ -24,11 +24,8 @@ export async function POST(req: Request) {
 
   try {
     const ipHash = hashClient(clientIp(req), String(body.fp ?? ""));
-    if (await hasRecentSubmission(ipHash, s.role_title))
-      return NextResponse.json(
-        { error: "You already submitted this role today. One submission per role per 24 hours." },
-        { status: 429 },
-      );
+    // One row per client per role, but a repeat is an edit, not an error.
+    const existingId = await existingSubmissionId(ipHash, s.role_title);
 
     // Outlier check runs against the peers this row would join, before it joins them.
     const b = expBucket(s.years_experience);
@@ -40,8 +37,8 @@ export async function POST(req: Request) {
     });
     const flagged = s.needsReview || isOutlier(s.current_ctc_annual, peers);
 
-    await insertSubmission({
-      id: randomUUID(),
+    const row = {
+      id: existingId ?? randomUUID(),
       role_title: s.role_title,
       role_category: s.role_category,
       years_experience: s.years_experience,
@@ -51,16 +48,20 @@ export async function POST(req: Request) {
       last_raise_date: s.last_raise_date,
       employment_type: s.employment_type,
       company_size_bucket: s.company_size_bucket,
+      employer_segment: s.employer_segment,
       submitted_at: new Date().toISOString(),
       ip_hash: ipHash,
-      status: flagged ? "pending" : "verified",
-    });
+      status: (flagged ? "pending" : "verified") as "pending" | "verified",
+    };
+    if (existingId) await replaceSubmission(existingId, row);
+    else await insertSubmission(row);
 
     const market = await marketRate(s.role_category, s.city, s.years_experience, s.current_ctc_annual);
     const external = await externalBenchmarks({
       role_category: s.role_category,
       city: s.city,
       years: s.years_experience,
+      segment: s.employer_segment,
     });
 
     const inflation =
@@ -79,8 +80,10 @@ export async function POST(req: Request) {
         last_raise_pct: s.last_raise_pct,
         last_raise_date: s.last_raise_date,
         employment_type: s.employment_type,
+        employer_segment: s.employer_segment,
       },
       held_for_review: flagged,
+      replaced_earlier: Boolean(existingId),
       market,
       external,
       inflation,

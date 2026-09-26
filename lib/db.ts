@@ -32,6 +32,20 @@ export function isConfigured() {
   return missingConfig().length === 0;
 }
 
+/**
+ * Table suffix, so the real-data rebuild can run against its own tables while the
+ * live demo keeps its fabricated rows. Unset in production; `_v2` on the rebuild.
+ */
+const SUFFIX = process.env.TABLE_SUFFIX === "_v2" ? "_v2" : "";
+
+function T(name: "salary_submission"): "salary_submission" | "salary_submission_v2";
+function T(name: "external_benchmark"): "external_benchmark" | "external_benchmark_v2";
+function T(name: "bucket_stats"): "bucket_stats" | "bucket_stats_v2";
+function T(name: "verified_count_this_month"): "verified_count_this_month" | "verified_count_this_month_v2";
+function T(name: string) {
+  return `${name}${SUFFIX}`;
+}
+
 export type Submission = {
   id: string;
   role_title: string;
@@ -43,6 +57,7 @@ export type Submission = {
   last_raise_date: string | null;
   employment_type: string;
   company_size_bucket: string | null;
+  employer_segment: string | null;
   submitted_at: string;
   ip_hash: string;
   status: "pending" | "verified" | "rejected";
@@ -58,20 +73,38 @@ export function hashClient(ip: string, fingerprint: string) {
     .digest("hex");
 }
 
-export async function hasRecentSubmission(ipHash: string, roleTitle: string) {
+/**
+ * The id of this client's existing submission for a role, if there is one.
+ *
+ * The gate exists to stop one person stuffing a bucket, which means one row per
+ * client per role — not one *attempt*. Rejecting the second attempt outright was
+ * wrong: it blocked anyone correcting a typo, and made the app look broken to
+ * anyone checking a second time. Returning the id lets the caller replace the
+ * row instead, which enforces the same limit without the dead end.
+ */
+export async function existingSubmissionId(ipHash: string, roleTitle: string) {
   const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
-  const { count, error } = await supabase()
-    .from("salary_submission")
-    .select("id", { count: "exact", head: true })
+  const { data, error } = await supabase()
+    .from(T("salary_submission"))
+    .select("id")
     .eq("ip_hash", ipHash)
     .eq("role_title", roleTitle)
-    .gt("submitted_at", since);
+    .gt("submitted_at", since)
+    .limit(1);
   if (error) throw new Error(`rate-limit check failed: ${error.message}`);
-  return (count ?? 0) > 0;
+  return data?.[0]?.id ?? null;
+}
+
+export async function replaceSubmission(id: string, s: Submission) {
+  const { error } = await supabase()
+    .from(T("salary_submission"))
+    .update({ ...s, id })
+    .eq("id", id);
+  if (error) throw new Error(`update failed: ${error.message}`);
 }
 
 export async function insertSubmission(s: Submission) {
-  const { error } = await supabase().from("salary_submission").insert(s);
+  const { error } = await supabase().from(T("salary_submission")).insert(s);
   if (error) throw new Error(`insert failed: ${error.message}`);
 }
 
@@ -97,14 +130,14 @@ export async function bucketStats(args: {
   maxYears: number;
   ctc?: number;
 }): Promise<BucketStats> {
-  const { data, error } = await supabase().rpc("bucket_stats", {
+  const { data, error } = await supabase().rpc(T("bucket_stats"), {
     p_category: args.role_category,
     p_city: args.city,
     p_min_years: args.minYears,
     p_max_years: args.maxYears,
     p_ctc: args.ctc ?? null,
   });
-  if (error) throw new Error(`bucket_stats failed: ${error.message}`);
+  if (error) throw new Error(`${T("bucket_stats")} failed: ${error.message}`);
   const row = data?.[0];
   if (!row || !row.n) return { n: 0, p25: 0, p50: 0, p75: 0, mean: 0, std: 0, rank_pct: null };
   return {
@@ -121,7 +154,7 @@ export async function bucketStats(args: {
 export async function verifiedCountThisMonth() {
   // A missing key or a broken counter must never take the landing page down.
   try {
-    const { data, error } = await supabase().rpc("verified_count_this_month");
+    const { data, error } = await supabase().rpc(T("verified_count_this_month"));
     return error ? 0 : Number(data ?? 0);
   } catch {
     return 0;
@@ -130,6 +163,7 @@ export async function verifiedCountThisMonth() {
 
 export type ExternalBenchmark = {
   source: string;
+  segment: string | null;
   source_url: string | null;
   license_note: string;
   p25: number | null;
@@ -144,10 +178,11 @@ export async function externalBenchmarks(args: {
   role_category: string;
   city: string | null;
   years: number;
+  segment?: string | null;
 }): Promise<ExternalBenchmark[]> {
   const q = supabase()
-    .from("external_benchmark")
-    .select("source, source_url, license_note, p25, p50, p75, sample_size, as_of")
+    .from(T("external_benchmark"))
+    .select("source, segment, source_url, license_note, p25, p50, p75, sample_size, as_of")
     .eq("role_category", args.role_category)
     .lte("min_years", args.years)
     .gte("max_years", args.years)
@@ -160,7 +195,14 @@ export async function externalBenchmarks(args: {
     const { data, error } = await (args.city
       ? q.or(`city.eq.${args.city},city.is.null`)
       : q.is("city", null));
-    return error ? [] : (data ?? []);
+    if (error) return [];
+    const rows = data ?? [];
+    // Their own segment first, then the rest — the comparison that answers their
+    // question is the one against employers like theirs, not a blend of all of them.
+    if (!args.segment) return rows;
+    return [...rows].sort((a, b) =>
+      Number(b.segment === args.segment) - Number(a.segment === args.segment),
+    );
   } catch {
     return [];
   }

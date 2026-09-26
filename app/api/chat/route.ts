@@ -108,6 +108,7 @@ export async function POST(req: Request) {
       role_category: p.role_category,
       city: p.city,
       years: p.years_experience,
+      segment: p.employer_segment,
     });
     const inflation =
       p.last_raise_pct != null && p.last_raise_date != null
@@ -121,6 +122,7 @@ export async function POST(req: Request) {
         city: p.city,
         years_experience: p.years_experience,
         experience_bucket: b.label,
+        employer_segment: p.employer_segment ?? "not given",
         current_ctc: inrFull(p.current_ctc_annual),
         last_raise_pct: p.last_raise_pct,
         last_raise_date: p.last_raise_date,
@@ -150,12 +152,13 @@ export async function POST(req: Request) {
             },
       external_benchmarks: external.map((e) => ({
         source: e.source,
+        employer_segment: e.segment,
         median: inrFull(e.p50),
         p25: e.p25 == null ? null : inrFull(e.p25),
         p75: e.p75 == null ? null : inrFull(e.p75),
         sample_size: e.sample_size,
         as_of: e.as_of,
-        note: "Third-party figure. Attribute it to the source by name when you use it; never merge it with the submission percentiles into one number.",
+        note: "Third-party figure. Attribute it to the source by name when you use it; never merge it with the submission percentiles into one number. Segments are not comparable to each other — an IT services median and a product-company median differ several-fold and both are correct.",
       })),
       inflation: inflation
         ? {

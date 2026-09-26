@@ -12,3 +12,7 @@ supabase/.branches
 !.env.local.example
 
 .vercel
+
+# Cached scraper output. Real data, but bulky and re-fetchable from Apify run
+# datasets — see scripts/recover-datasets.mts.
+data/raw
