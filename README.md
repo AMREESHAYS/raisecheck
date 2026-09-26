@@ -62,6 +62,16 @@ npm run db:push                # create the schema
 npm run db:seed
 ```
 
+Put your keys in **`.env.local`** at the repo root (gitignored, never committed).
+After editing it, restart the server, then check `GET /api/ai-health` — it makes one
+tiny request and tells you plainly whether the key works, rather than leaving you to
+guess from the app silently serving template output.
+
+Note: the app pins `https://api.anthropic.com` explicitly. Some hosts export
+`ANTHROPIC_BASE_URL` for their own tooling, and inheriting it would send your key
+somewhere you did not intend. Set `SALTOR_ANTHROPIC_BASE_URL` only if you deliberately
+front the API with a gateway.
+
 With no `ANTHROPIC_API_KEY`, the AI features still work — they fall back to deterministic
 output built from the same data. The chatbot answers from templates and the negotiation
 draft is assembled from a template. Only the prose changes when you add a key; the numbers
@@ -166,6 +176,7 @@ tests/                  vitest suites for every engine above
 | `POST /api/submissions` | Screen and store a report, and return that person's assessment |
 | `POST /api/chat` | Grounded question answering |
 | `POST /api/negotiate` | Negotiation draft |
+| `GET /api/ai-health` | Verifies the configured API key actually works |
 
 ---
 

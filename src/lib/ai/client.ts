@@ -20,12 +20,31 @@ export function isAiEnabled(): boolean {
   return Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN);
 }
 
+/**
+ * Where API requests go.
+ *
+ * Pinned explicitly rather than left to the SDK's default, because some hosts
+ * (CI runners, agent sandboxes, corporate proxies) export ANTHROPIC_BASE_URL
+ * for their own tooling. Inheriting that silently would send this app's
+ * requests — and its API key — somewhere the operator never intended. Override
+ * deliberately with SALTOR_ANTHROPIC_BASE_URL if you really do front the API
+ * with a gateway.
+ */
+const BASE_URL = process.env.SALTOR_ANTHROPIC_BASE_URL ?? "https://api.anthropic.com";
+
 export function getClient(): Anthropic {
   if (!isAiEnabled()) {
-    throw new Error("ANTHROPIC_API_KEY is not configured");
+    throw new Error(
+      "ANTHROPIC_API_KEY is not configured. Add it to .env.local and restart the dev server.",
+    );
   }
-  if (!cached) cached = new Anthropic();
+  if (!cached) cached = new Anthropic({ baseURL: BASE_URL });
   return cached;
+}
+
+/** Exposed for the health check so the UI can report where it would call. */
+export function baseUrl(): string {
+  return BASE_URL;
 }
 
 /** Extracts the plain text of a response, ignoring thinking and tool blocks. */
