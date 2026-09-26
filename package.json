@@ -9,7 +9,8 @@
     "test": "tsx lib/selfcheck.mts",
     "import-benchmarks": "tsx scripts/import-benchmarks.mts",
     "ingest": "tsx scripts/ingest-apify.mts",
-    "health": "tsx scripts/health.mts"
+    "health": "tsx scripts/health.mts",
+    "review": "tsx scripts/review.mts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",

@@ -70,11 +70,17 @@ const NoPii = () => (
   </p>
 );
 
-export default function Check({ initialCount }: { initialCount: number }) {
+export default function Check({
+  initialCount,
+  prefill,
+}: {
+  initialCount: number;
+  prefill?: { role_title: string; city: string; years_experience: string };
+}) {
   const [form, setForm] = useState({
-    role_title: "",
-    years_experience: "",
-    city: "",
+    role_title: prefill?.role_title ?? "",
+    years_experience: prefill?.years_experience ?? "",
+    city: prefill?.city ?? "",
     current_ctc_annual: "",
     last_raise_pct: "",
     last_raise_date: "",
@@ -333,6 +339,8 @@ function Results({ result, onReset }: { result: Result; onReset: () => void }) {
         </section>
       )}
 
+      {enough && <ShareRange you={you} market={market} />}
+
       <div className="mt-9 rounded-xl border border-line bg-card p-4">
         <NoPii />
       </div>
@@ -349,6 +357,69 @@ function Results({ result, onReset }: { result: Result; onReset: () => void }) {
         }}
       />
     </main>
+  );
+}
+
+/**
+ * Sharing spreads the market rate, never the sharer's pay. The link carries only
+ * role, city and experience band — the three things that make the number useful
+ * to a colleague — and the number in the text is the median, not yours. A share
+ * feature on a salary site that leaks the sharer's salary is worse than none.
+ */
+function ShareRange({
+  you,
+  market,
+}: {
+  you: Result["you"] & { experience_bucket: string };
+  market: Extract<Market, { p50: number }>;
+}) {
+  const [done, setDone] = useState(false);
+
+  const link =
+    typeof window === "undefined"
+      ? ""
+      : `${window.location.origin}/?role=${encodeURIComponent(you.role_title)}` +
+        `&city=${encodeURIComponent(you.city)}&yrs=${you.years_experience}`;
+  const text =
+    `${you.role_title}s with ${you.experience_bucket} in ${you.city}: ` +
+    `${inrShort(market.p25)}–${inrShort(market.p75)}, median ${inrShort(market.p50)}. ` +
+    `From ${market.n} anonymous submissions.`;
+
+  async function share() {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "RaiseCheck", text, url: link });
+        return;
+      } catch {
+        // Cancelled, or unavailable in this context — fall through to copying.
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(`${text}\n${link}`);
+      setDone(true);
+      setTimeout(() => setDone(false), 1800);
+    } catch {
+      /* Clipboard blocked in some in-app browsers. */
+    }
+  }
+
+  return (
+    <section className="mt-9 rounded-xl border border-line bg-card p-5">
+      <h2 className="num text-xl">Send this to your team</h2>
+      <p className="mt-2 text-sm leading-relaxed text-muted">
+        Shares the range for {you.role_title}s in {you.city} — never your own number. More
+        submissions is how this bucket stops being {market.n} people.
+      </p>
+      <p className="mt-3 rounded-lg border border-line bg-paper px-3.5 py-3 text-sm leading-relaxed">
+        {text}
+      </p>
+      <button
+        onClick={share}
+        className="mt-3 w-full rounded-lg bg-ink px-4 py-3 text-sm font-medium text-paper"
+      >
+        {done ? "Copied" : "Share the range"}
+      </button>
+    </section>
   );
 }
 
