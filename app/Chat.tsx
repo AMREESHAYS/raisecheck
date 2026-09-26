@@ -20,7 +20,7 @@ const SUGGESTIONS = [
   "Draft my negotiation email",
 ];
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
   const [done, setDone] = useState(false);
   return (
     <button
@@ -35,8 +35,64 @@ function CopyButton({ text }: { text: string }) {
       }}
       className="mt-3 rounded-md border border-line px-2.5 py-1 text-xs text-muted"
     >
-      {done ? "Copied" : "Copy"}
+      {done ? "Copied" : label}
     </button>
+  );
+}
+
+/**
+ * The coach answers a negotiation request as "EMAIL ... TALKING POINTS ...".
+ * Split it so each half gets its own copy button: the email goes into a mail
+ * client, the points get read off a screen in a 1:1. One blob forces the user
+ * to hand-separate them in the exact moment they're nervous.
+ * Anything that isn't in that shape falls through as plain prose.
+ */
+function parseCoachReply(text: string) {
+  const m = text.match(/^([\s\S]*?)\bTALKING POINTS\b:?\s*([\s\S]*)$/i);
+  if (!m) return null;
+  const email = m[1].replace(/^\s*EMAIL\s*:?\s*/i, "").trim();
+  const points = m[2]
+    .split(/\n+/)
+    .map((l) => l.replace(/^\s*\d+[.)]\s*/, "").trim())
+    .filter(Boolean);
+  return email && points.length ? { email, points } : null;
+}
+
+function CoachAnswer({ text }: { text: string }) {
+  const parsed = parseCoachReply(text);
+  if (!parsed) {
+    return (
+      <>
+        <div className="whitespace-pre-wrap text-[0.95rem] leading-relaxed">{text}</div>
+        <CopyButton text={text} />
+      </>
+    );
+  }
+  return (
+    <div className="space-y-5">
+      <section>
+        <h3 className="text-[0.7rem] font-medium uppercase tracking-[0.14em] text-muted">
+          What to say
+        </h3>
+        <ol className="mt-2 space-y-2.5">
+          {parsed.points.map((p, i) => (
+            <li key={i} className="flex gap-2.5 text-[0.95rem] leading-relaxed">
+              <span className="num shrink-0 text-muted">{i + 1}.</span>
+              <span>{p}</span>
+            </li>
+          ))}
+        </ol>
+        <CopyButton text={parsed.points.map((p, i) => `${i + 1}. ${p}`).join("\n")} label="Copy points" />
+      </section>
+
+      <section className="border-t border-line pt-4">
+        <h3 className="text-[0.7rem] font-medium uppercase tracking-[0.14em] text-muted">
+          Email draft
+        </h3>
+        <div className="mt-2 whitespace-pre-wrap text-[0.95rem] leading-relaxed">{parsed.email}</div>
+        <CopyButton text={parsed.email} label="Copy email" />
+      </section>
+    </div>
   );
 }
 
@@ -145,8 +201,7 @@ export default function Chat({ profile }: { profile: Profile }) {
               </p>
             ) : (
               <div key={i} className="max-w-[92%] rounded-2xl rounded-bl-sm border border-line bg-card px-4 py-3.5">
-                <div className="whitespace-pre-wrap text-[0.95rem] leading-relaxed">{m.content}</div>
-                <CopyButton text={m.content} />
+                <CoachAnswer text={m.content} />
               </div>
             ),
           )}

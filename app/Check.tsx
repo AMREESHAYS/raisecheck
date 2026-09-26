@@ -30,6 +30,7 @@ type ExternalBench = {
 };
 
 type Result = {
+  is_sample?: boolean;
   you: Profile & { role_category: string; experience_bucket: string };
   held_for_review: boolean;
   market: Market;
@@ -85,6 +86,22 @@ export default function Check({ initialCount }: { initialCount: number }) {
   const [result, setResult] = useState<Result | null>(null);
   const set = (k: keyof typeof form) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  // Read-only: shows live percentiles for a worked example without writing a row.
+  async function showSample() {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/sample");
+      const json = await res.json();
+      if (!res.ok) setError(json.error ?? "Couldn't load the sample.");
+      else setResult(json);
+    } catch {
+      setError("Couldn't reach the server. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -215,6 +232,13 @@ export default function Check({ initialCount }: { initialCount: number }) {
           {busy ? "Checking…" : "Check my salary"}
         </button>
 
+        <button
+          type="button" onClick={showSample} disabled={busy}
+          className="w-full rounded-lg border border-line bg-card px-5 py-3.5 text-sm font-medium disabled:opacity-50"
+        >
+          Or see a sample result first
+        </button>
+
         <div className="rounded-xl border border-line bg-card p-4">
           <NoPii />
         </div>
@@ -235,6 +259,19 @@ function Results({ result, onReset }: { result: Result; onReset: () => void }) {
       <button onClick={onReset} className="text-sm text-muted underline decoration-line underline-offset-4">
         ← Start over
       </button>
+
+      {result.is_sample && (
+        <p className="mt-5 rounded-lg border border-line bg-card px-4 py-3 text-sm leading-relaxed">
+          <span className="font-medium">This is a sample profile.</span>{" "}
+          <span className="text-muted">
+            The percentiles and inflation figures below are live — only the person is made up. Nothing
+            was saved.
+          </span>{" "}
+          <button onClick={onReset} className="underline decoration-line underline-offset-4">
+            Check your own
+          </button>
+        </p>
+      )}
 
       <h1 className="num mt-6 text-3xl leading-tight">
         {you.role_title} · {you.experience_bucket} · {you.city}
