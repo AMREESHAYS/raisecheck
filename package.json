@@ -1,0 +1,35 @@
+{
+  "name": "saltor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Salary fairness platform for India: real benchmarks, inflation-adjusted raises, and AI negotiation help.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:push": "drizzle-kit push",
+    "db:seed": "tsx src/db/seed.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "@electric-sql/pglite": "^0.3.0",
+    "drizzle-orm": "^0.44.0",
+    "next": "^16.3.6",
+    "postgres": "^3.4.5",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "drizzle-kit": "^0.31.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
