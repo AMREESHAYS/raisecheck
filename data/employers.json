@@ -121,12 +121,22 @@
     ]
   },
   "_aliases_comment": [
-    "AmbitionBox lists some employers under a different legal or former name.",
-    "eternal-limited is Zomato's renamed parent entity; ola-cabs is Ola's listing.",
-    "Mapped here so their rows are segmented rather than silently discarded."
+    "AmbitionBox lists employers under legal, former or abbreviated names.",
+    "Each of these is a company already named in `segments` — without the alias",
+    "its rows are silently dropped, which cost 400 already-paid-for rows."
   ],
   "aliases": {
     "eternal-limited": "Product & Internet",
-    "ola-cabs": "Product & Internet"
+    "ola-cabs": "Product & Internet",
+    "icici-lombard-general-insurance-company": "BFSI",
+    "sbi-life-insurance-company": "BFSI",
+    "bain-company": "Consulting",
+    "bcg": "Consulting",
+    "zs": "Consulting",
+    "kpmg-india": "Consulting",
+    "ernst-young": "Consulting",
+    "mckinsey-company": "Consulting",
+    "microsoft-corporation": "GCC",
+    "byju-s": "Startup"
   }
 }
