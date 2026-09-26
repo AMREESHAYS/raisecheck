@@ -146,7 +146,12 @@ export async function externalBenchmarks(args: {
     .order("as_of", { ascending: false });
   // External data is a bonus, not a dependency: never fail a result page over it.
   try {
-    const { data, error } = args.city ? await q.eq("city", args.city) : await q.is("city", null);
+    // A city-less row is an all-India figure and still applies to someone who
+    // named a city — AmbitionBox publishes no location at all, so filtering
+    // strictly on city would hide every row it gives us.
+    const { data, error } = await (args.city
+      ? q.or(`city.eq.${args.city},city.is.null`)
+      : q.is("city", null));
     return error ? [] : (data ?? []);
   } catch {
     return [];
