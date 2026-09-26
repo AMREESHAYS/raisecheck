@@ -202,6 +202,32 @@ export const ROLES: Record<string, Category> = {
 
 export const ROLE_TITLES = Object.keys(ROLES).sort();
 
+/**
+ * Employer segment — the field that explains the widest real spread in Indian pay.
+ * Engineering at 3-5 years is ~₹7.1 L in IT services and ~₹26.4 L at a product
+ * company. Both are true; without this they average into a number describing nobody.
+ */
+export const SEGMENTS = [
+  "IT Services",
+  "Product & Internet",
+  "GCC",
+  "BFSI",
+  "Consulting",
+  "Startup",
+  "Other",
+] as const;
+export type Segment = (typeof SEGMENTS)[number];
+
+export const SEGMENT_HINTS: Record<Segment, string> = {
+  "IT Services": "TCS, Infosys, Wipro, Accenture, Cognizant",
+  "Product & Internet": "Flipkart, Zomato, Razorpay, Zoho, Swiggy",
+  GCC: "Indian office of a global firm — Amazon, Google, JPMC",
+  BFSI: "Banks, insurance, financial services",
+  Consulting: "Deloitte, EY, KPMG, McKinsey, ZS",
+  Startup: "Under ~500 people, VC-funded",
+  Other: "Anything else",
+};
+
 export const EMPLOYMENT_TYPES = ["full-time", "contract"] as const;
 export const COMPANY_SIZES = ["<50", "50-500", "500-5000", "5000+"] as const;
 

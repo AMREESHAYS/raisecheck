@@ -10,6 +10,7 @@ export type Profile = {
   last_raise_pct: number | null;
   last_raise_date: string | null;
   employment_type: string;
+  employer_segment?: string | null;
 };
 
 type Msg = { role: "user" | "assistant"; content: string };

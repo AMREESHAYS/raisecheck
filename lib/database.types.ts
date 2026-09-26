@@ -13,6 +13,7 @@ export type SalarySubmissionRow = {
   last_raise_date: string | null;
   employment_type: string;
   company_size_bucket: string | null;
+  employer_segment: string | null;
   submitted_at: string;
   ip_hash: string;
   status: "pending" | "verified" | "rejected";

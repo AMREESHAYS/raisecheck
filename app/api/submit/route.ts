@@ -51,6 +51,7 @@ export async function POST(req: Request) {
       last_raise_date: s.last_raise_date,
       employment_type: s.employment_type,
       company_size_bucket: s.company_size_bucket,
+      employer_segment: s.employer_segment,
       submitted_at: new Date().toISOString(),
       ip_hash: ipHash,
       status: flagged ? "pending" : "verified",
@@ -61,6 +62,7 @@ export async function POST(req: Request) {
       role_category: s.role_category,
       city: s.city,
       years: s.years_experience,
+      segment: s.employer_segment,
     });
 
     const inflation =
@@ -79,6 +81,7 @@ export async function POST(req: Request) {
         last_raise_pct: s.last_raise_pct,
         last_raise_date: s.last_raise_date,
         employment_type: s.employment_type,
+        employer_segment: s.employer_segment,
       },
       held_for_review: flagged,
       market,

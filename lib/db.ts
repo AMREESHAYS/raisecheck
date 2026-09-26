@@ -57,6 +57,7 @@ export type Submission = {
   last_raise_date: string | null;
   employment_type: string;
   company_size_bucket: string | null;
+  employer_segment: string | null;
   submitted_at: string;
   ip_hash: string;
   status: "pending" | "verified" | "rejected";
@@ -144,6 +145,7 @@ export async function verifiedCountThisMonth() {
 
 export type ExternalBenchmark = {
   source: string;
+  segment: string | null;
   source_url: string | null;
   license_note: string;
   p25: number | null;
@@ -158,10 +160,11 @@ export async function externalBenchmarks(args: {
   role_category: string;
   city: string | null;
   years: number;
+  segment?: string | null;
 }): Promise<ExternalBenchmark[]> {
   const q = supabase()
     .from(T("external_benchmark"))
-    .select("source, source_url, license_note, p25, p50, p75, sample_size, as_of")
+    .select("source, segment, source_url, license_note, p25, p50, p75, sample_size, as_of")
     .eq("role_category", args.role_category)
     .lte("min_years", args.years)
     .gte("max_years", args.years)
@@ -174,7 +177,14 @@ export async function externalBenchmarks(args: {
     const { data, error } = await (args.city
       ? q.or(`city.eq.${args.city},city.is.null`)
       : q.is("city", null));
-    return error ? [] : (data ?? []);
+    if (error) return [];
+    const rows = data ?? [];
+    // Their own segment first, then the rest — the comparison that answers their
+    // question is the one against employers like theirs, not a blend of all of them.
+    if (!args.segment) return rows;
+    return [...rows].sort((a, b) =>
+      Number(b.segment === args.segment) - Number(a.segment === args.segment),
+    );
   } catch {
     return [];
   }

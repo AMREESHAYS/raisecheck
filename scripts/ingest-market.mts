@@ -19,7 +19,7 @@
 import { config } from "dotenv";
 config({ path: [".env.local", ".env"] });
 
-import { readFileSync } from "node:fs";
+import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { runActor } from "../lib/apify.ts";
 import { extractPoint, aggregate, type DataPoint } from "../lib/ingest/extract.ts";
 import { supabase } from "../lib/db.ts";
@@ -38,6 +38,9 @@ const flag = (n: string) => {
 const has = (n: string) => argv.includes(`--${n}`);
 
 const dryRun = has("dry-run");
+// Cache raw rows and stop. Scraping and interpreting are separate jobs — the
+// aggregation can then be re-tuned offline without spending another credit.
+const cacheOnly = has("cache");
 const perCompany = Number(flag("per-company") ?? 40);
 const minSample = Number(flag("min-sample") ?? 5);
 const batchSize = Number(flag("batch") ?? 10);
@@ -52,7 +55,7 @@ if (!process.env.APIFY_TOKEN) {
   console.error("APIFY_TOKEN is not set — see .env.local.example");
   process.exit(1);
 }
-if (!dryRun && process.env.TABLE_SUFFIX !== "_v2") {
+if (!dryRun && !cacheOnly && process.env.TABLE_SUFFIX !== "_v2") {
   console.error("Refusing to write: set TABLE_SUFFIX=_v2 so this cannot touch the live demo's tables.");
   process.exit(1);
 }
@@ -79,6 +82,12 @@ for (const segment of wanted) {
         { maxItems: batch.length * perCompany, timeoutSecs: 900 },
       );
       raw += run.items.length;
+      // Save before parsing: a parser bug must never cost the rows again.
+      mkdirSync("data/raw", { recursive: true });
+      writeFileSync(
+        `data/raw/${segment.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-${run.datasetId}.json`,
+        JSON.stringify({ segment, dataset: run.datasetId, fetched: new Date().toISOString(), items: run.items }),
+      );
       const got = run.items
         .map((r) => extractPoint(r as Record<string, unknown>))
         .filter((p): p is DataPoint => p !== null);
@@ -103,7 +112,7 @@ for (const segment of wanted) {
         `n=${String(b.sample_size).padStart(4)}  p50=₹${b.p50.toLocaleString("en-IN")}`,
     );
 
-  if (dryRun) continue;
+  if (dryRun || cacheOnly) continue;
 
   const rows = buckets.map((b) => ({
     source: cfg.label,
